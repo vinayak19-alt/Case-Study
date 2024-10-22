@@ -1,6 +1,6 @@
 package tests;
 
-import dao.DatabaseContext;
+import JDBC.DatabaseContext;
 import dao.PayrollService;
 import entities.Employee;
 import org.junit.Before;
@@ -10,9 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,5 +1,7 @@
 package dao;
 
+import entities.Tax;
+
 import java.util.List;
 
 public interface ITaxService {

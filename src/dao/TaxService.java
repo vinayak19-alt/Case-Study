@@ -1,8 +1,6 @@
 package dao;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare;
-import entities.Employee;
-import entities.Tax;
+import JDBC.DatabaseContext;
 import exceptions.InvalidInputException;
 import exceptions.TaxCalculationException;
 
@@ -10,14 +8,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.function.Predicate;
 
 public class TaxService implements ITaxService {
     private ValidationService validationService = new ValidationService();
     @Override
     public void calculateTax(int employeeID, int taxYear) {
-        String sql = "SELECT * FROM TAX t LEFT JOIN Employee e ON e.EmployeeID = t.EmployeeID WHERE e.EmployeeID = ? AND t.TaxYear = ?";
+        String sql = "SELECT * FROM TAX t INNER JOIN Employee e ON e.EmployeeID = t.EmployeeID WHERE e.EmployeeID = ? AND t.TaxYear = ?";
         try(Connection conn = DatabaseContext.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, employeeID);
@@ -28,8 +24,10 @@ public class TaxService implements ITaxService {
             int income = 0;
             if(rs.next()){
                 name = rs.getString("FirstName");
-                taxAmount = rs.getInt("TaxAmount");
                 income = rs.getInt("TaxableIncome");
+                //if we want to fetch the value directly from the DB we can use the below line
+                //taxAmount = rs.getInt("TaxAmount");
+                taxAmount = (int)(income * 0.2);
                 if(!validationService.isValidTaxAmount(taxAmount, income)){
                     throw new InvalidInputException("Tax Amount is invalid");
                 }
@@ -37,7 +35,7 @@ public class TaxService implements ITaxService {
                 throw new TaxCalculationException("Tax information for Employee ID: " + employeeID + " does not exist");
             }
             if(taxAmount != 0){
-                System.out.println("The tac amount for Employee ID: " + employeeID + " Name: " + name + " is: " + taxAmount);
+                System.out.println("The tax amount for Employee ID: " + employeeID + " Name: " + name + " is: " + taxAmount);
             }else{
                 System.out.println("Either the Employee ID you have entered does not exist or there is no record of the Employee for the entered year");
             }
@@ -117,4 +115,5 @@ public class TaxService implements ITaxService {
             System.out.println("Error Occurred T4: " + e.getMessage());
         }
     }
+
 }

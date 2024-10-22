@@ -1,9 +1,9 @@
 package dao;
 
+import JDBC.DatabaseContext;
 import entities.Employee;
 import entities.Payroll;
 import exceptions.InvalidInputException;
-import exceptions.PayrollGenerationException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,8 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PayrollService implements IPayrollService {
 
@@ -130,5 +128,7 @@ public class PayrollService implements IPayrollService {
             System.out.println("Error Occurred P4: " + e.getMessage());
         }
     }
+
+
 
 }

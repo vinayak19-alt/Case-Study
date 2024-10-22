@@ -1,6 +1,8 @@
 package dao;
 
 import entities.Employee;
+import entities.Payroll;
+import entities.Tax;
 
 import java.util.List;
 
@@ -13,7 +15,7 @@ public interface IEmployeeService {
     public List<List> getAllEmployees();
 
     //adding employee to db
-    public void addEmployee(Employee employee);
+    public void addEmployee(Employee employee, Payroll payroll, Tax tax);
 
     //updating the data of an employee
     public void updateEmployee(int employeeID, String field, String newValue);

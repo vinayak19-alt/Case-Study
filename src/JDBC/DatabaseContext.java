@@ -1,4 +1,4 @@
-package dao;
+package JDBC;
 
 import exceptions.DatabaseConnectionException;
 

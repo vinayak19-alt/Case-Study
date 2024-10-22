@@ -1,6 +1,9 @@
 package dao;
 
+import JDBC.DatabaseContext;
 import entities.Employee;
+import entities.Payroll;
+import entities.Tax;
 import exceptions.EmployeeNotFoundException;
 import exceptions.InvalidInputException;
 
@@ -15,7 +18,7 @@ public class EmployeeService implements IEmployeeService{
     private ValidationService validationService = new ValidationService();
 
     @Override
-    public Employee getEmployeeByID(int employeeID) {
+    public Employee getEmployeeByID(int employeeID) throws EmployeeNotFoundException {
         if (employeeID <= 0) {
             throw new InvalidInputException("Invalid employee ID");
         }
@@ -75,7 +78,7 @@ public class EmployeeService implements IEmployeeService{
     }
 
     @Override
-    public void addEmployee(Employee employee) {
+    public void addEmployee(Employee employee, Payroll payroll, Tax tax) {
 
 
         if (!validationService.isValidEmail(employee.getEmail())) {
@@ -85,23 +88,49 @@ public class EmployeeService implements IEmployeeService{
         if (!validationService.isValidPhoneNumber(employee.getPhoneNo())) {
             throw new InvalidInputException("Invalid phone number");
         }
-        String sql = "INSERT INTO Employee (EmployeeID, FirstName, LastName, DOB, Gender, Email, PhoneNo, Address, Position, JoiningDate, TerminationDate) " +
+        String employeeSql = "INSERT INTO Employee (EmployeeID, FirstName, LastName, DOB, Gender, Email, PhoneNo, Address, Position, JoiningDate, TerminationDate) " +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String payrollSql = "INSERT INTO Payroll (PayrollID, EmployeeID, PayStartDate, PayEndDate, BasicSalary, OvertimePay, Deductions, NetSalary) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String taxSql = "INSERT INTO Tax (TaxID, EmployeeID, TaxYear, TaxableIncome, TaxAmount) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
 
         try(Connection conn = DatabaseContext.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setInt(1, employee.getEmployeeID());
-            stmt.setString(2, employee.getFirstName());
-            stmt.setString(3, employee.getLastName());
-            stmt.setString(4, employee.getDateOfBirth());
-            stmt.setString(5, employee.getGender());
-            stmt.setString(6, employee.getEmail());
-            stmt.setString(7, employee.getPhoneNo());
-            stmt.setString(8, employee.getAddress());
-            stmt.setString(9, employee.getPosition());
-            stmt.setString(10, employee.getJoiningDate());
-            stmt.setString(11, employee.getTerminationDate());
-            stmt.executeUpdate();
+            PreparedStatement employeeStmt = conn.prepareStatement(employeeSql);
+            PreparedStatement payrollStmt = conn.prepareStatement(payrollSql);
+            PreparedStatement taxStmt = conn.prepareStatement(taxSql)){
+            //Inserting in Employee Table
+            employeeStmt.setInt(1, employee.getEmployeeID());
+            employeeStmt.setString(2, employee.getFirstName());
+            employeeStmt.setString(3, employee.getLastName());
+            employeeStmt.setString(4, employee.getDateOfBirth());
+            employeeStmt.setString(5, employee.getGender());
+            employeeStmt.setString(6, employee.getEmail());
+            employeeStmt.setString(7, employee.getPhoneNo());
+            employeeStmt.setString(8, employee.getAddress());
+            employeeStmt.setString(9, employee.getPosition());
+            employeeStmt.setString(10, employee.getJoiningDate());
+            employeeStmt.setString(11, employee.getTerminationDate());
+            employeeStmt.executeUpdate();
+
+            // Insert into Payroll table
+            payrollStmt.setInt(1, payroll.getPayrollID());
+            payrollStmt.setInt(2, employee.getEmployeeID());  // Foreign key from Employee
+            payrollStmt.setString(3, payroll.getPayStartDate());
+            payrollStmt.setString(4, payroll.getPayEndDate());
+            payrollStmt.setInt(5, payroll.getBasicSalary());
+            payrollStmt.setInt(6, payroll.getOverTimePay());
+            payrollStmt.setInt(7, payroll.getDeductions());
+            payrollStmt.setInt(8, payroll.getNetSalary());
+            payrollStmt.executeUpdate();
+
+            taxStmt.setInt(1, tax.getTaxID());
+            taxStmt.setInt(2, employee.getEmployeeID());  // Foreign key from Employee
+            taxStmt.setInt(3, tax.getTaxYear());
+            taxStmt.setInt(4, tax.getTaxableIncome());
+            taxStmt.setInt(5, tax.getTaxAmount());
+            taxStmt.executeUpdate();
         }catch (SQLException e){
             System.out.println("Error Occurred 3: " + e.getMessage());
         }

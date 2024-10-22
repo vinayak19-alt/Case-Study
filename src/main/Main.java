@@ -4,8 +4,7 @@ import dao.*;
 import entities.Employee;
 import entities.FinancialRecord;
 import entities.Payroll;
-
-import javax.swing.event.MenuDragMouseListener;
+import entities.Tax;
 import java.util.Scanner;
 
 public class Main {
@@ -90,35 +89,62 @@ public class Main {
     private static void addEmployee(){
         System.out.println("Enter Employee ID");
         int id = sc.nextInt();
+        sc.nextLine();
         System.out.println("Enter First Name:");
-        String first = sc.next();
+        String first = sc.nextLine();
         System.out.println("Enter Last Name:");
-        String last = sc.next();
+        String last = sc.nextLine();
         System.out.println("Enter Date of birth:");
-        String dob = sc.next();
+        String dob = sc.nextLine();
         System.out.println("Enter Gender: ");
-        String gender = sc.next();
+        String gender = sc.nextLine();
         System.out.println("Enter email: ");
-        String email = sc.next();
+        String email = sc.nextLine();
         System.out.println("Enter Phone Number: ");
-        String phoneNo = sc.next();
+        String phoneNo = sc.nextLine();
         System.out.println("Enter Address");
         String address = sc.nextLine();
         System.out.println("Enter position: ");
         String position = sc.nextLine();
         System.out.println("Enter Joining Date: ");
         String joining = sc.nextLine();
-        System.out.println("Enter Termination Date (or press Enter to leave it as null):");
+        System.out.println("Enter Termination Date (or Enter 'null' to leave it as null):");
         String terminationInput = sc.nextLine();
-        String termination = terminationInput == "null" ? null : terminationInput;
+        String termination = terminationInput.equals("null") ? null : terminationInput;
+        //ENter in Payroll Table
+        System.out.println("Enter the data for Payroll table:");
+        System.out.println("Enter the Payroll ID:");
+        int payID = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Enter Pay Start Date:");
+        String startDate = sc.nextLine();
+        System.out.println("Enter Pay End Date:");
+        String endDate = sc.nextLine();
+        System.out.println("Enter Basic Salary:");
+        int basicSalary = sc.nextInt();
+        System.out.println("Enter overtime pay:");
+        int overtimePay = sc.nextInt();
+        System.out.println("Enter Deductions:");
+        int deductions = sc.nextInt();
+        System.out.println("Enter Net Salary:");
+        int netSalary = sc.nextInt();
+        //Enter in Tax table
+        System.out.println("Enter the data for Tax table:");
+        System.out.println("Enter Tax ID:");
+        int taxID = sc.nextInt();
+        System.out.println("Enter Tax year:");
+        int taxYear = sc.nextInt();
         Employee newEmployee = new Employee(id, first, last, dob, gender, email, phoneNo, address, position, joining, termination);
-        employeeService.addEmployee(newEmployee);
+        Payroll newPayroll = new Payroll(payID, newEmployee, startDate, endDate, basicSalary, overtimePay, deductions, netSalary);
+        Tax newTax = new Tax(taxID, newEmployee, taxYear, (newPayroll.getBasicSalary())*12, (int)(((newPayroll.getBasicSalary())*12)*0.2));
+        employeeService.addEmployee(newEmployee, newPayroll, newTax);
     }
     private static void updateEmployee(){
         System.out.println("PLease enter the ID, field and New value respectively to be updated");
         int id = sc.nextInt();
-        String field = sc.next();
-        String newValue = sc.next();
+        sc.nextLine();
+        String field = sc.nextLine();
+        String newValue = sc.nextLine();
         employeeService.updateEmployee(id, field, newValue);
     }
     private static void removeEmployee(){
@@ -155,10 +181,11 @@ public class Main {
     private static void generatePayroll(){
         System.out.println("Enter Employee ID:");
         int id = sc.nextInt();
+        sc.nextLine();
         System.out.println("Enter pay start date:");
-        String startDate = sc.next();
+        String startDate = sc.nextLine();
         System.out.println("Enter pay end date:");
-        String endDate = sc.next();
+        String endDate = sc.nextLine();
         int payroll = payrollService.generatePayroll(id, startDate, endDate);
         if(payroll != 0){
             System.out.println("The payroll for the Employee is: " + payroll);
@@ -182,9 +209,9 @@ public class Main {
 
     private static void getPayrollsForPeriod(){
         System.out.println("Enter start date:");
-        String startDate = sc.next();
+        String startDate = sc.nextLine();
         System.out.println("Enter end date: ");
-        String endDate = sc.next();
+        String endDate = sc.nextLine();
         payrollService.getPayrollsForPeriod(startDate, endDate);
     }
 
@@ -219,12 +246,14 @@ public class Main {
         int empID = sc.nextInt();
         System.out.println("Enter Record ID: ");
         int recID = sc.nextInt();
+        sc.nextLine();
         System.out.println("Enter Description:");
-        String desc = sc.next();
+        String desc = sc.nextLine();
         System.out.println("Enter amount:");
         int amount = sc.nextInt();
+        sc.nextLine();
         System.out.println("Enter Record type:");
-        String recType = sc.next();
+        String recType = sc.nextLine();
         financialRecordService.addFinancialRecord(empID, recID, desc, amount, recType);
     }
     private static void getRecordWithRecordID(){
@@ -244,7 +273,7 @@ public class Main {
     }
     private static void getRecordUsingDates(){
         System.out.println("Enter the date for which you need records:");
-        String date = sc.next();
+        String date = sc.nextLine();
         FinancialRecord obj = financialRecordService.getFinancialRecordsForDate(date);
         if(obj != null){
             System.out.println(obj);
@@ -325,10 +354,11 @@ public class Main {
     private static void genPayrollReport(){
         System.out.println("Enter the Employee ID:");
         int id = sc.nextInt();
+        sc.nextLine();
         System.out.println("Enter Pay start date:");
-        String start = sc.next();
+        String start = sc.nextLine();
         System.out.println("Enter Pay end date:");
-        String end = sc.next();
+        String end = sc.nextLine();
         reportGenerator.generatePayrollReport(id, start, end);
     }
     private static void genTaxReport(){
